@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 - 2026-11-13
+
+- Before dispatching a fix, the coordinator checks whether the code under the finding should exist at all by the product rules. Findings on a path already slated for removal or pending a keep-or-delete decision are recorded into that removal task, not patched. Briefs describe such paths as "planned for removal, findings recorded only" rather than "existing behavior", which reviewers read as behavior to keep correct. Source: a real review where two fix rounds went into a path the owner had already ruled out.
+
 ## 0.2.0 - 2026-11-13
 
 Selected general-purpose rules merged from the author's earlier project full-spectrum-review (v0.13.0, MIT). None of them has a controlled comparison behind it; `evidence.md` marks each as inferred.
