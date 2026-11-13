@@ -1,5 +1,7 @@
 # review-standard
 
+> 实战工坊 / [Field Lab](https://github.com/liuyejinghong/field-lab) 的一部分：在真实项目里做出来、持续打磨的 AI Agent 工具。
+
 A code review standard written for AI agents. It tells a coordinating agent how to grade the risk of a change, how many independent reviewers to send and what each should trace, which findings are worth reporting, how to verify them, and when to stop. It has two modes: reviewing a change (a diff, a PR, a sub-agent's delivery) and auditing an existing codebase with no diff. It is a set of Markdown instructions, not a program, and it does not prescribe any model. The measured data behind it comes from one project and a small sample; thresholds are starting values.
 
 ---
