@@ -129,7 +129,9 @@ git clone https://github.com/liuyejinghong/review-standard.git \
 | --- | --- | --- |
 | [`SKILL.md`](SKILL.md) | 完整标准 | 主控 Agent |
 | [`templates.md`](templates.md) | 审查、存量审查、复审、核实四种任务书模板 | 主控派发审查者前读 |
+| [`necessity.md`](necessity.md) | 必要性审法、补丁堆考古、业务语义检查面 | 审“有没有必要”和业务流的审查者，按需读 |
 | [`evidence.md`](evidence.md) | 每条规则的依据与证据强度、否决的做法、待校准项 | 想知道“为什么这样定”的人 |
+| [`evals/`](evals/REGRESSION.md) | 回归网：4 个预设陷阱案例、期望结果和运行流程 | 修改本标准的人 |
 
 项目自己的规则（`AGENTS.md`、`CLAUDE.md`、合同文件）优先于本标准。两者冲突时按项目规则。
 
@@ -154,6 +156,7 @@ git clone https://github.com/liuyejinghong/review-standard.git \
 - 各项数字（约 400 行的拆分界线、复审的 30% 界线、对照轮次数等）是起步值，要在你自己的项目上校准。
 - 高风险改动目前有两种编排并存，对照数据攒够后才会保留一种。
 - 节省 token 的幅度都是估算，没有实测。
+- 0.2.0 从 full-spectrum-review 吸收的规则没有对照实验；回归网 2026-11-13 首次运行 4/4 通过（单次，见 `evals/results/`）。
 
 完整清单见 `evidence.md` 的“待校准项”和“开放问题”。
 
@@ -165,9 +168,13 @@ git clone https://github.com/liuyejinghong/review-standard.git \
 - 审查漏掉、事后才暴露的真问题，以及它属于哪一类。
 - 某条规则在你的项目里行不通的具体情况。
 
-修改规则时，请同时在 `evidence.md` 写明依据和证据强度。没有依据的阈值标为起步值。
+修改规则时，请同时在 `evidence.md` 写明依据和证据强度。没有依据的阈值标为起步值。修改 `SKILL.md`、`templates.md` 或 `necessity.md` 后，按 [`evals/REGRESSION.md`](evals/REGRESSION.md) 跑一次回归网。
 
 版本记录见 [`CHANGELOG.md`](CHANGELOG.md)。
+
+## 来源与致谢
+
+部分规则吸收自作者的早期项目 [full-spectrum-review](https://github.com/liuyejinghong/full-spectrum-review)（MIT）：必要性审法与强制反证、补丁堆考古、业务语义检查面、有界集合逐成员枚举、按根因去重、已接受权衡不重报、按真实暴露面定级，以及回归网的 4 个案例。吸收时只取通用方法，没有搬它的优先级分类、发现编号台账、报告持久化、阶段编排和领域包。逐条出处见 [`evidence.md`](evidence.md)。
 
 ## 许可证
 

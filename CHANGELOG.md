@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.0 - 2026-11-13
+
+Selected general-purpose rules merged from the author's earlier project full-spectrum-review (v0.13.0, MIT). None of them has a controlled comparison behind it; `evidence.md` marks each as inferred.
+
+- New `necessity.md`, read on demand by the reviewers who cover necessity (D4) and business flow: a four-step necessity method (reconstruct the problem, derive the minimum sufficient mechanism, challenge each extra layer, mandatory disconfirmation with a two-source floor when there is no history), patch-stack archaeology, and four business-semantics lenses (temporal semantics, conservation, mode parity, counterfactual scenarios).
+- Bounded sets (key tables, allowlists, enums, state×event matrices, contract field tables) must be checked member by member from the consuming code. Sampling does not count as reviewed.
+- Deduplication is now by root cause. Before: findings were merged when they shared file, line and failure scenario, which merged different root causes on one line and left one root cause reported several times. Now: symptoms of one root cause become one finding; same line with different root causes stays separate.
+- Findings may carry an optional `status` (open, closed, accepted with a cited rationale). A tradeoff the project has already accepted in writing is not re-reported unless its premise changed, and the change must be stated.
+- Severity follows real exposure: a default-off or experimental path is graded by its reachable consequence and labelled as such. Frequency is marked measured or inferred. A passing test is evidence, not proof.
+- The coordinator restates the failure mechanism in its own words before accepting a blocking finding. Extra context in a brief must pass one test: would this fact change what the reviewer does?
+- All runs of one review are pinned to the same commit; a moved head is re-reviewed or reported as `INCOMPLETE`.
+- Codebase audit: three inventories during the survey (entry points, mutable facts, external boundaries); two new output sections, "designs worth keeping" and "open questions".
+- New `evals/`: a regression net of four trap cases with expectations and a run procedure. First run against this version: 4/4 passed (`evals/results/2026-11-13-v0.2.0.md`). It only shows that seeded traps are still caught.
+
 ## 0.1.0 - 2026-11-13
 
 First public release.
