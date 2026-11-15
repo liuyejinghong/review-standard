@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 - 2026-11-15
+
+- P1 now includes deterministic checks prepared for the change itself, such as a script that lists the call sites that must change or fails when any are left behind. A failure stops the review before model reviewers start. Sources: Factory task specifications, Agentless patch validation, SWE-agent linter gate.
+- P3 splits structural changes (behavior unchanged, tests unchanged, the same test set run before and after) from behavioral changes into separate review units, and a unit that mixes both is split first. Sources: Beck's "never mix structural and behavioral changes", Google small CLs.
+- The implementation report has two new mandatory items: (a) each fact the change's safety depends on needs one test plus reverse-verification evidence — break the corresponding production line, capture the failing output, restore; (b) every modified existing test is mapped to the pre-approved rule or test change item. The review brief in `templates.md` carries the same fields. Sources: Google "will the tests actually fail when the code is broken?", Google mutation testing, Agentless, Factory review guidance.
+- Reviewers no longer rerun the full checks already run by the author or coordinator in P1; they run only targeted tests tied to their findings or spot checks. Reverse verification that needs code changes happens only in an isolated copy, never in the reviewed workspace. D7 allows spot-checking one or two reverse verifications. Sources: Factory test impact analysis, Devin review carry-forward.
+- New R7: only established blocking findings open a rework round. Should-fix and optional findings are merged into an existing fix round or recorded for the next task, and their destination is listed in the conclusion. Sources: Google review standard, Factory review severity levels.
+
 ## 0.2.1 - 2026-11-13
 
 - Before dispatching a fix, the coordinator checks whether the code under the finding should exist at all by the product rules. Findings on a path already slated for removal or pending a keep-or-delete decision are recorded into that removal task, not patched. Briefs describe such paths as "planned for removal, findings recorded only" rather than "existing behavior", which reviewers read as behavior to keep correct. Source: a real review where two fix rounds went into a path the owner had already ruled out.

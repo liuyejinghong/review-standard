@@ -91,6 +91,18 @@
 | 回归网（`evals/`） | `FSR` 的 evals。4 个案例的陷阱机制取自 `FSR`；夹具改写为中性领域（审计事件导出、提交服务、告警回放、批量迁移），期望文件按本标准术语重写。2026-11-13 首次运行 4/4 通过，见 `evals/results/2026-11-13-v0.2.0.md` | 实测（单次） |
 | 内置 `/code-review` 的发现也要核实 | 官方文档没有写明本机运行的 `/code-review` 各 effort 是否有独立核实阶段 | 未知 |
 
+### 0.3.0 新增规则
+
+强度分三档：强、中、推断；括号内注明对应的原有证据标签。
+
+| 规则（SKILL.md 位置） | 来源 | 强度 |
+|---|---|---|
+| P1 包含为本次改动事先准备的确定性核对 | Factory 的任务规范要求写明要跑的检查、由证据判断完成：<https://factory.com/articles/coding-agent-task-specifications>；Agentless 用回归与复现测试做 patch validation：<https://arxiv.org/html/2407.01489v2>；SWE-agent 的 linter gate 直接拒收无效编辑：<https://arxiv.org/html/2405.15793v3>；Claude Code 最佳实践要求给代理可运行、返回通过与失败的检查：<https://code.claude.com/docs/en/best-practices> | 强（`声称` + `实测`；把调用点脚本列为 P1 是 `推断`） |
+| P3 结构改动与行为改动拆成不同审查单元 | Beck：同一提交不混结构改动与行为改动，结构改动用改前改后同一组测试提供行为不变的证据：<https://newsletter.kentbeck.com/p/augmented-coding-beyond-the-vibes>；Google 小 CL：重构与功能/修复分开提交：<https://google.github.io/eng-practices/review/developer/small-cls.html> | 强（`声称`；Beck 的两句出自该文附录给 AI 的规则，不是正文论述） |
+| P5 实现报告新增两项必填：(a) 关键事实配测试与反向验证证据；(b) 既有测试改动逐条对应事先批准的规则或测试变更项 | (a) Google 评审标准问“代码坏了测试会不会失败”：<https://google.github.io/eng-practices/review/reviewer/looking-for.html>；Google 变异测试中 1,159,723 个变异体、>87% 被杀：<https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/46584.pdf>；Agentless 的复现测试只有 213/300 在原仓库复现，测试本身也要验证：<https://arxiv.org/html/2407.01489v2>。(b) Google 小 CL：重构不动测试，行为改动显式改测试：<https://google.github.io/eng-practices/review/developer/small-cls.html>；Factory：审查者不必猜缺失的测试是否有意：<https://factory.com/articles/reviewing-agent-generated-pull-requests> | 中（`声称` + `实测` 间接；把反向验证和测试变更单列为报告必填是 `推断`） |
+| 第 3 节只跑定向测试、反向验证用隔离副本；D7 抽查 1–2 条反向验证 | Factory 测试影响分析：按改动选最可能发现回归的测试，选择逻辑放脚本，不确定时扩大集合：<https://factory.com/articles/test-impact-analysis-coding-agents>；Devin Review 在后续 push 时携带上一轮 finding，核对新提交是否修复：<https://docs.devin.ai/work-with-devin/devin-review>；Google 的“代码坏了测试会不会失败”用于抽查：<https://google.github.io/eng-practices/review/reviewer/looking-for.html> | 中（`声称` + `推断`；不重跑全量的节省幅度未测） |
+| R7 只有已成立的阻断触发返工轮 | Google 评审标准：CL 确实改善整体代码健康就应批准，小建议标 Nit：<https://google.github.io/eng-practices/review/reviewer/standard.html>；Factory Review 分级中 P0 合并/部署前必修、P1 完成前必修：<https://docs.factory.com/onboarding/configuring-your-review-droid/review-droid-guidelines> | 中（`声称`；应改与可选的具体去向由主控决定，无对照数据） |
+
 ## 对照轮用 3 个 run 的权衡
 
 对照轮跑 3 个 run：审查者甲 A 路、审查者甲全维度、审查者乙 B 路。审查者乙全维度只在审查者甲全维度漏掉审查者甲 A 路独有的高严重度真问题时补跑。
@@ -118,7 +130,7 @@
 | 8 个维度各开一路 | 共享上下文的维度拆开后重复读取同样的材料 |
 | L0 无审查自动通过 | RADAR 的做法依赖训练过的风险评分。作者项目没有分级准确率数据 |
 | 默认使用 `/code-review ultra` | 误报率和与本机 `/code-review` 的对比数据都没有公开；每次约 $5 到 $25。作者裁定不默认使用 |
-| 审查中调用 `/simplify` | `/simplify` 直接修改代码，审查是只读的。D4、D6 的发现成立后，由作者或主控决定是否用 `/simplify` 修复 |
+| 审查中调用 `/simplify` | `/simplify` 直接修改被审工作区的代码，审查是只读的。D4、D6 的发现成立后，由作者或主控决定是否用 `/simplify` 修复 |
 
 ## 待校准项
 
@@ -139,6 +151,7 @@
 
 13. 回归网。4 个案例在本标准下还没有跑过；通过标准和运行时机是起步值。案例数少，只覆盖 4 种陷阱形态。
 14. `necessity.md` 的按需读取。B 路、乙路多读约 80 行是否值得，以及审查者是否真的按 4 步执行，没有实测。
+15. R5（高风险修复复审保持 L2）对很小的修复 diff 是否可降为单人加 A 路审法。需要对照数据，未校准前 R5 不变。
 
 开放问题：
 
@@ -154,6 +167,7 @@
 人类审查规范与研究
 
 - Google Engineering Practices：<https://google.github.io/eng-practices/review/reviewer/standard.html>、<https://google.github.io/eng-practices/review/reviewer/looking-for.html>、<https://google.github.io/eng-practices/review/reviewer/navigate.html>、<https://google.github.io/eng-practices/review/developer/small-cls.html>、<https://google.github.io/eng-practices/review/emergencies.html>
+- Kent Beck，Augmented Coding: Beyond the Vibes：<https://newsletter.kentbeck.com/p/augmented-coding-beyond-the-vibes>
 - Sadowski 等，Modern Code Review: A Case Study at Google（ICSE-SEIP 2018）：<https://storage.googleapis.com/gweb-research2023-media/pubtools/4476.pdf>
 - Software Engineering at Google 第 9 章：<https://abseil.io/resources/swe-book/html/ch09.html>
 - Bosu 等，Characteristics of Useful Code Reviews（MSR 2015）：<https://amiangshu.me/papers/CodeReview-MSR-2015.pdf>
@@ -173,15 +187,19 @@ AI 审查工具（源码或文档）
 - Cursor Bugbot：<https://cursor.com/blog/building-bugbot>
 - CodeRabbit：<https://www.coderabbit.ai/blog/context-engineering-ai-code-reviews>
 - Graphite：<https://graphite.com/guides/ai-code-review-context-full-repo-vs-diff>
+- Factory：任务规范 <https://factory.com/articles/coding-agent-task-specifications>、审查 agent 生成的 PR <https://factory.com/articles/reviewing-agent-generated-pull-requests>、测试影响分析 <https://factory.com/articles/test-impact-analysis-coding-agents>、Review 分级 <https://docs.factory.com/onboarding/configuring-your-review-droid/review-droid-guidelines>
+- Devin Review：<https://docs.devin.ai/work-with-devin/devin-review>
 
 论文
 
 - SWR-Bench：<https://arxiv.org/abs/2509.01494>；HalluJudge：<https://arxiv.org/abs/2601.19072>
+- Agentless：<https://arxiv.org/html/2407.01489v2>；SWE-agent：<https://arxiv.org/html/2405.15793v3>
+- Google 变异测试：<https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/46584.pdf>
 - Lost in the Middle：<https://arxiv.org/abs/2307.03172>；RULER：<https://arxiv.org/abs/2404.06654>
 - 过度纠错：<https://arxiv.org/abs/2603.00539>；MAST 多代理失败模式：<https://arxiv.org/abs/2503.13657>
 - Anthropic 多代理研究系统：<https://www.anthropic.com/engineering/built-multi-agent-research-system>
 
 Claude Code 官方文档
 
-- <https://code.claude.com/docs/en/code-review-local.md>、<https://code.claude.com/docs/en/ultrareview.md>、<https://code.claude.com/docs/en/sub-agents.md>、<https://code.claude.com/docs/en/prompt-caching.md>、<https://code.claude.com/docs/en/costs.md>
+- <https://code.claude.com/docs/en/code-review-local.md>、<https://code.claude.com/docs/en/ultrareview.md>、<https://code.claude.com/docs/en/sub-agents.md>、<https://code.claude.com/docs/en/prompt-caching.md>、<https://code.claude.com/docs/en/costs.md>、<https://code.claude.com/docs/en/best-practices>
 - 缓存定价：<https://platform.claude.com/docs/en/build-with-claude/prompt-caching>
