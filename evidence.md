@@ -103,6 +103,14 @@
 | 第 3 节只跑定向测试、反向验证用隔离副本；D7 抽查 1–2 条反向验证 | Factory 测试影响分析：按改动选最可能发现回归的测试，选择逻辑放脚本，不确定时扩大集合：<https://factory.com/articles/test-impact-analysis-coding-agents>；Devin Review 在后续 push 时携带上一轮 finding，核对新提交是否修复：<https://docs.devin.ai/work-with-devin/devin-review>；Google 的“代码坏了测试会不会失败”用于抽查：<https://google.github.io/eng-practices/review/reviewer/looking-for.html> | 中（`声称` + `推断`；不重跑全量的节省幅度未测） |
 | R7 只有已成立的阻断触发返工轮 | Google 评审标准：CL 确实改善整体代码健康就应批准，小建议标 Nit：<https://google.github.io/eng-practices/review/reviewer/standard.html>；Factory Review 分级中 P0 合并/部署前必修、P1 完成前必修：<https://docs.factory.com/onboarding/configuring-your-review-droid/review-droid-guidelines> | 中（`声称`；应改与可选的具体去向由主控决定，无对照数据） |
 
+### 0.4.0 新增规则
+
+| 规则（SKILL.md 位置） | 来源 | 强度 |
+|---|---|---|
+| R8 重复发现转为常驻确定性检查，白名单只减不增 | pstack 作者 poteto 的演讲 “All Code Is Slop (Except Mine)”：每次纠正代理，先改成确定性检查或用 API/架构消除，规则文本放最后；代理会照抄代码库里的既有写法（来源为用户提供的中文译稿，原始链接未核） | 推断（`声称`，无对照数据） |
+| D5 新增“注释为绕过辩护” | 同一演讲：代理在注释与文档里为没做对找理由，注释不可强制执行 | 推断（`声称`） |
+| D7 新增“时序缺陷只测一种顺序” | 同一演讲提到基于属性的测试已抓到 UI 缺陷；作者项目实测：一次关轮修复后的竞态由审查者手工注入时序才复现 | 推断（`声称` + 单例 `实测`） |
+
 ## 对照轮用 3 个 run 的权衡
 
 对照轮跑 3 个 run：审查者甲 A 路、审查者甲全维度、审查者乙 B 路。审查者乙全维度只在审查者甲全维度漏掉审查者甲 A 路独有的高严重度真问题时补跑。

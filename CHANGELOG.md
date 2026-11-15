@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0 - 2026-11-15
+
+- New R8: when a class of finding is confirmed for the second time, the coordinator turns it into a standing deterministic check (lint, architecture test, call-site script) during the stage retro. Existing violations go on an allowlist with a reason and an exit condition, and the allowlist may only shrink. Classes that cannot be checked mechanically get a written reason. Afterwards the check, not the reviewer, catches that class.
+- D5 now reports comments that justify a bypass, special case, or temporary patch when the root cause is fixable within the change.
+- D7 now reports a timing or interleaving fix whose tests cover only one event order.
+- Source for all three: poteto's talk "All Code Is Slop (Except Mine)". Strength is inferred (see `evidence.md`).
+
 ## 0.3.0 - 2026-11-15
 
 - P1 now includes deterministic checks prepared for the change itself, such as a script that lists the call sites that must change or fails when any are left behind. A failure stops the review before model reviewers start. Sources: Factory task specifications, Agentless patch validation, SWE-agent linter gate.
